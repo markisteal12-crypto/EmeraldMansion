@@ -752,7 +752,7 @@ const M={info:null};
 async function verifyKey(key){
   try{
     if(!CONFIG.publicKey||!crypto.subtle)return{err:'Membership keys aren\'t set up on this site yet.'};
-    const [p,sg]=String(key).trim().split('.');if(!p||!sg)return{err:'That doesn\'t look like a membership key.'};
+    const [p,sg]=String(key).replace(/[\s"'`]/g,'').split('.');if(!p||!sg)return{err:'That doesn\'t look like a membership key.'};
     const pub=await crypto.subtle.importKey('jwk',CONFIG.publicKey,{name:'ECDSA',namedCurve:'P-256'},false,['verify']);
     const ok=await crypto.subtle.verify({name:'ECDSA',hash:'SHA-256'},pub,b64uDec(sg),b64uDec(p));
     if(!ok)return{err:'That key isn\'t valid.'};
